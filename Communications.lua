@@ -659,6 +659,8 @@ function CEPGP_ExportConfig(option, player)
 			CEPGP_SendAddonMsg("ExportConfig;Decay;Separate;" .. (CEPGP.Decay.Separate and "true" or "false"), channel, player);
 		
 		elseif option == "EP" then
+			CEPGP_SendAddonMsg("ExportConfig;EP;Max;" .. CEPGP.EP.Max, channel, player);
+
 			local bossEP = {};
 			for boss, EP in pairs(CEPGP.EP.BossEP) do
 				table.insert(bossEP, boss);

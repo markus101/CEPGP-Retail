@@ -26,6 +26,9 @@ function CEPGP_initialise()
 	if MOD_COEF == nil then
 		MOD_COEF = 2;
 	end
+	if MAX_EP == nil then
+		MAX_EP = math.huge;
+	end
 	if BASEGP == nil then
 		BASEGP = 1;
 	end
@@ -314,6 +317,8 @@ function CEPGP_initSavedVars()
 	
 	--[[	EP States	]]--
 	CEPGP.EP = CEPGP.EP or {};
+
+	CEPGP.EP.Max = CEPGP.GP.Max or MAX_EP or math.huge;
 	
 	CEPGP.EP.BossEP = CEPGP.EP.BossEP or {};
 	CEPGP.EP.AutoAward = CEPGP.EP.AutoAward or {};
@@ -1973,6 +1978,7 @@ function CEPGP_getDebugInfo()
 	info = info .. "Version: " .. CEPGP_Info.Version .. " " .. CEPGP_Info.Build .. "<br />\n";
 	info = info .. "Locale: " .. GetLocale() .. "<br />\n";
 	info = info .. "Poll Rate: " .. CEPGP.PollRate .. "<br />\n";
+	info = info .. "Max EP: " .. MAX_EP .. "<br />\n";
 	info = info .. "GP Formula: (" .. COEF .. "x(" .. MOD_COEF .. "^<sup>((ilvl/26)+(rarity-4))</sup>)xSlot Modifier)x" .. MOD .. "<br />\n";
 	info = info .. "Base GP: " .. BASEGP .. "<br />\n";
 	info = info .. "Traffic Entries: " .. #TRAFFIC .. "<br />\n";
@@ -2989,10 +2995,10 @@ function CEPGP_addAltEPGP(EP, GP, alt, main)
 		local mainEP, mainGP = CEPGP_getEPGP(main, CEPGP_roster[main][1]);
 		local altEP, altGP = CEPGP_getEPGP(alt, index);
 		
-		mainEP = math.max(mainEP + EP, 0);
+		mainEP = math.min(math.max(mainEP + EP, 0), CEPGP.EP.Max);
 		mainGP = math.max(mainGP + GP, CEPGP.GP.Min + math.max(GP, 0));
 		
-		altEP = math.max(altEP + EP, 0);
+		altEP = math.min(math.max(altEP + EP, 0), CEPGP.EP.Max);
 		altGP = math.max(altGP + GP, CEPGP.GP.Min + math.max(GP, 0));
 		
 		if CEPGP.Alt.SyncEP and CEPGP.Alt.SyncGP then

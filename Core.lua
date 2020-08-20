@@ -44,6 +44,7 @@ CEPGP_lootChannel = "Raid";
 MOD = 1;
 COEF = 4.83;
 MOD_COEF = 2;
+MAX_EP = math.huge;
 BASEGP = 1;
 STANDBYEP = false;
 STANDBYOFFLINE = false;
@@ -634,7 +635,7 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 					else
 						EP, GP = CEPGP_getEPGP(name, index);
 						EPB = EP;
-						EP = math.max(math.floor(EP + amount), 0);
+						EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
 						GP = math.max(math.floor(GP), CEPGP.GP.Min);
 						GuildRosterSetOfficerNote(index, EP .. "," .. GP);
 						if CEPGP.Alt.Links[name] and not mains[name] then
@@ -739,7 +740,7 @@ function CEPGP_addGuildEP(amount, msg)
 					local index = CEPGP_getIndex(name);
 					
 					EP, GP = CEPGP_getEPGP(name, index);
-					EP = math.max(math.floor(EP + amount), 0);
+					EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
 					GP = math.max(math.floor(GP), CEPGP.GP.Min);
 					
 					if index then
@@ -844,7 +845,7 @@ function CEPGP_addStandbyEP(amount, boss, msg)
 								local _, rank, rankIndex, _, _, _, _, _, online = GetGuildRosterInfo(index);
 								local EP,GP = CEPGP_getEPGP(name, index);
 								
-								EP = math.max(math.floor(EP + amount), 0);
+								EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
 								GP = math.max(math.floor(GP), CEPGP.GP.Min);
 									
 								for i = 1, #STANDBYRANKS do
@@ -900,7 +901,7 @@ function CEPGP_addStandbyEP(amount, boss, msg)
 									mains[main] = name;
 								end
 							else
-								EP = math.max(math.floor(EP + amount), 0);
+								EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
 								GP = math.max(math.floor(GP), CEPGP.GP.Min);
 								GuildRosterSetOfficerNote(index, EP .. "," .. GP);
 							end
@@ -972,8 +973,8 @@ function CEPGP_addGP(player, amount, itemID, itemLink, msg, response)
 			GPB = GP;
 			
 			GP = math.max(math.floor(GP + amount), CEPGP.GP.Min + amount);
-			EP = math.max(math.floor(EP), 0);		
-			
+			EP = math.min(math.max(math.floor(EP), 0), CEPGP.EP.Max);
+
 			if main then
 				CEPGP_addAltEPGP(0, amount, player, main);
 				if CEPGP.Alt.BlockAwards then
@@ -1054,7 +1055,7 @@ function CEPGP_addEP(player, amount, msg)
 			EP, GP = CEPGP_getEPGP(player, index);
 			EPB = EP;
 			
-			EP = math.max(math.floor(EP + amount), 0);
+			EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
 			GP = math.max(math.floor(GP), CEPGP.GP.Min);
 			
 			if main then
@@ -1195,9 +1196,9 @@ function CEPGP_decay(amount, msg, decayEP, decayGP, fixed)
 						EP, GP = CEPGP_getEPGP(name, index);
 						if decayEP or (not decayEP and not decayGP) then
 							if fixed then
-								EP = math.max(math.floor(tonumber(EP)-amount), 0);
+								EP = math.min(math.max(math.floor(tonumber(EP)-amount), 0), CEPGP.EP.Max);
 							else
-								EP = math.max(math.floor(tonumber(EP)*(1-(amount/100))), 0);
+								EP = math.min(math.max(math.floor(tonumber(EP)*(1-(amount/100))), 0), CEPGP.EP.Max);
 							end
 						end
 						if decayGP or (not decayEP and not decayGP) then

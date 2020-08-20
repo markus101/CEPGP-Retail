@@ -7432,12 +7432,22 @@
 						</Anchor>
 					</Anchors>
 				</FontString>
+				<FontString name="CEPGP_options_max_ep" inherits="GameFontNormal" text="Maximum EP:">
+					<Color r="1" g="1" b="1"/>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="10" y="-40" />
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
 				<FontString name="$parent_autoaward_header" inherits="GameFontNormal" text="Auto Award">
 					<Color r="1" g="1" b="1"/>
 					<Anchors>
 						<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 							<Offset>
-								<AbsDimension x="-25" y="-120" />
+								<AbsDimension x="-25" y="-160" />
 							</Offset>
 						</Anchor>
 					</Anchors>
@@ -7455,6 +7465,56 @@
 			</Layer>
 		</Layers>
 		<Frames>
+			<EditBox name="CEPGP_options_max_ep_edit" inherits="InputBoxTemplate">
+				<Size>
+					<AbsDimension x="80" y="20" />
+				</Size>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="CEPGP_options_max_ep">
+						<Offset>
+							<AbsDimension x="10" y="0" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						CEPGP_options_max_ep_edit:SetAutoFocus(false);
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT");
+						GameTooltip:SetText("Sets the maximum EP that all players can have. Clear to remove a previously set limit.\nNote: This change will not take effect until the player's EP is modified.");
+					</OnEnter>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+					<OnEnterPressed>
+						CEPGP_options_max_ep_edit:ClearFocus();
+					</OnEnterPressed>
+					<OnEditFocusLost>
+						self:HighlightText(0,0);
+						local value = self:GetText();
+						if not CEPGP_isNumber(value) then
+							CEPGP_print("Maximum EP must contain numbers only", true);
+							self:SetText("");
+						elseif value == "" then
+							value = math.huge;
+							self:SetText("");
+						elseif tonumber(self:GetText()) == 0 then
+							CEPGP_print("Maximum EP cannot be 0", true);
+							self:SetText("");
+						elseif 0 > tonumber(self:GetText()) then
+							CEPGP_print("Maximum EP must be a positive number", true);
+							self:SetText("");
+						elseif CEPGP.EP.Max == tonumber(value) then
+							return;
+						end
+						
+						MAX_EP = tonumber(value);
+						CEPGP.EP.Max = tonumber(value);
+						CEPGP_print("Updated maximum EP");
+					</OnEditFocusLost>
+				</Scripts>
+			</EditBox>
 			<Button name="$parent_mc_button" inherits="GameMenuButtonTemplate" text="Molten Core / Onyxia">
 				<Size>
 					<AbsDimension x="150" y="21" />
@@ -7462,7 +7522,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT">
 						<Offset>
-							<AbsDimension x="10" y="-40" />
+							<AbsDimension x="10" y="-80" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -7480,7 +7540,7 @@
 				<Anchors>
 					<Anchor point="TOP" relativePoint="BOTTOM" relativeto="$parent_header">
 						<Offset>
-							<AbsDimension x="0" y="-10" />
+							<AbsDimension x="0" y="-50" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -7498,7 +7558,7 @@
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT">
 						<Offset>
-							<AbsDimension x="-40" y="-40" />
+							<AbsDimension x="-40" y="-80" />
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -9282,6 +9342,10 @@
 		</Frames>
 		<Scripts>
 			<OnShow>
+				if CEPGP.EP.Max ~= math.huge then
+					CEPGP_options_max_ep_edit:SetText(CEPGP.EP.Max);
+				end
+
 				CEPGP_toggleBossConfigFrame("CEPGP_EP_options_mc");
 			</OnShow>
 		</Scripts>
