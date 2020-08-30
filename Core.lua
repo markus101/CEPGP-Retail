@@ -635,7 +635,7 @@ function CEPGP_AddRaidEP(amount, msg, encounter)
 					else
 						EP, GP = CEPGP_getEPGP(name, index);
 						EPB = EP;
-						EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
+						EP = math.max(math.floor(EP + amount), 0);
 						GP = math.max(math.floor(GP), CEPGP.GP.Min);
 						GuildRosterSetOfficerNote(index, EP .. "," .. GP);
 						if CEPGP.Alt.Links[name] and not mains[name] then
@@ -740,7 +740,7 @@ function CEPGP_addGuildEP(amount, msg)
 					local index = CEPGP_getIndex(name);
 					
 					EP, GP = CEPGP_getEPGP(name, index);
-					EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
+					EP = math.max(math.floor(EP + amount), 0);
 					GP = math.max(math.floor(GP), CEPGP.GP.Min);
 					
 					if index then
@@ -845,7 +845,7 @@ function CEPGP_addStandbyEP(amount, boss, msg)
 								local _, rank, rankIndex, _, _, _, _, _, online = GetGuildRosterInfo(index);
 								local EP,GP = CEPGP_getEPGP(name, index);
 								
-								EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
+								EP = math.max(math.floor(EP + amount), 0);
 								GP = math.max(math.floor(GP), CEPGP.GP.Min);
 									
 								for i = 1, #STANDBYRANKS do
@@ -973,7 +973,7 @@ function CEPGP_addGP(player, amount, itemID, itemLink, msg, response)
 			GPB = GP;
 			
 			GP = math.max(math.floor(GP + amount), CEPGP.GP.Min + amount);
-			EP = math.min(math.max(math.floor(EP), 0), CEPGP.EP.Max);
+			EP = math.max(math.floor(EP), 0);
 
 			if main then
 				CEPGP_addAltEPGP(0, amount, player, main);
@@ -1055,7 +1055,7 @@ function CEPGP_addEP(player, amount, msg)
 			EP, GP = CEPGP_getEPGP(player, index);
 			EPB = EP;
 			
-			EP = math.min(math.max(math.floor(EP + amount), 0), CEPGP.EP.Max);
+			EP = math.max(math.floor(EP + amount), 0);
 			GP = math.max(math.floor(GP), CEPGP.GP.Min);
 			
 			if main then
